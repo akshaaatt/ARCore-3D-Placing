@@ -470,17 +470,17 @@ class HelloArRenderer(val activity: HelloArActivity) :
     val tap = activity.view.tapHelper.poll()
 
     val hitResultList = when {
-          activity.instantPlacementSettings.isInstantPlacementEnabled() -> {
-            frame.hitTestInstantPlacement(tap.x, tap.y, APPROXIMATE_DISTANCE_METERS)
-          }
-          else -> {
-            frame.hitTest(tap)
-          }
+        activity.instantPlacementSettings.isInstantPlacementEnabled() -> {
+          tap?.let { frame.hitTestInstantPlacement(tap.x, tap.y, APPROXIMATE_DISTANCE_METERS) }
+        }
+        else -> {
+          tap?.let { frame.hitTest(tap) }
+        }
     }
 
     // Hits are sorted by depth. Consider only closest hit on a plane, Oriented Point, Depth Point,
     // or Instant Placement Point.
-    val firstHitResult = hitResultList.firstOrNull { hit ->
+    val firstHitResult = hitResultList?.firstOrNull { hit ->
         when (val trackable = hit.trackable!!) {
           is Plane ->
             trackable.isPoseInPolygon(hit.hitPose) &&
